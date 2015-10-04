@@ -1,20 +1,10 @@
----
-title: Investigating relationship between confidence in executive branch of federal
-  government and media exposure among American citizens
-output:
-  html_document:
-    theme: cerulean
-    keep_md: TRUE
-date: "18-10-2014"
----
+# Investigating relationship between confidence in executive branch of federal government and media exposure among American citizens
+18-10-2014  
 
 <!-- For more info on RMarkdown see http://rmarkdown.rstudio.com/ -->
 
 <!-- Enter the code required to load your data in the space below. The data will be loaded but the line of code won't show up in your write up (echo=FALSE) in order to save space-->
-```{r echo=FALSE}
-load(url("http://bit.ly/dasi_gss_data"))
-gss <- subset(gss, !is.na(gss$news) & !is.na(gss$confed))
-```
+
 
 <!-- In the remainder of the document, add R code chunks as needed -->
 
@@ -53,19 +43,52 @@ In this section, we provide some summary statistics about our variables of inter
 
 Below, we provide the summaries and a contingency table for the variables.
 
-```{r}
+
+```r
 summary(gss$news)
+```
 
+```
+##          Everyday  Few Times A Week       Once A Week Less Than Once Wk 
+##             10412              4366              2577              2047 
+##             Never 
+##              1528
+```
+
+```r
 summary(gss$confed)
+```
 
+```
+## A Great Deal    Only Some   Hardly Any 
+##         3393        11054         6483
+```
+
+```r
 table(gss$confed, gss$news)
+```
+
+```
+##               
+##                Everyday Few Times A Week Once A Week Less Than Once Wk
+##   A Great Deal     1785              681         409               284
+##   Only Some        5541             2377        1349              1069
+##   Hardly Any       3086             1308         819               694
+##               
+##                Never
+##   A Great Deal   234
+##   Only Some      718
+##   Hardly Any     576
 ```
 
 Next we show how the variables relate to each other in a mosaic plot.
 
-```{r plot, fig.width=8}
+
+```r
 mosaicplot(table(gss$news, gss$confed), xlab="newspaper reading frequency", ylab="confidence", main="Citizens' confidence and newspapers reading frequency", col=c(2,3,4), cex.axis = 0.5)
 ```
+
+![](dasi_project_gss_newsconf_files/figure-html/plot-1.png) 
 
 From the above summary and visualiation, we see that for each confidence category, there is a decline in the
 number of citizens as their freqency of reading newspapers decrease. That is the number of citizens who are confident
@@ -92,10 +115,53 @@ Now, we proceed to check conditions for this test:
 Therefore the conditions are satisfied and we can run the hypothesis test. We use the provided $inference()$ function
 for this computation.
 
-```{r}
+
+```r
 source("http://bit.ly/dasi_inference")
 suppressWarnings(inference(y= gss$confed,x= gss$news,est="proportion",type="ht",null=0,alternative="greater",method="theoretical"))
 ```
+
+```
+## Response variable: categorical, Explanatory variable: categorical
+## Chi-square test of independence
+## 
+## Summary statistics:
+##               x
+## y              Everyday Few Times A Week Once A Week Less Than Once Wk
+##   A Great Deal     1785              681         409               284
+##   Only Some        5541             2377        1349              1069
+##   Hardly Any       3086             1308         819               694
+##   Sum             10412             4366        2577              2047
+##               x
+## y              Never   Sum
+##   A Great Deal   234  3393
+##   Only Some      718 11054
+##   Hardly Any     576  6483
+##   Sum           1528 20930
+```
+
+```
+## H_0: Response and explanatory variable are independent.
+## H_A: Response and explanatory variable are dependent.
+## Check conditions: expected counts
+##               x
+## y              Everyday Few Times A Week Once A Week Less Than Once Wk
+##   A Great Deal  1687.91           707.78      417.76            331.84
+##   Only Some     5499.01          2305.87     1361.02           1081.11
+##   Hardly Any    3225.08          1352.35      798.22            634.05
+##               x
+## y               Never
+##   A Great Deal 247.71
+##   Only Some    807.00
+##   Hardly Any   473.29
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  y_table
+## X-squared = 62.96, df = 8, p-value = 1.22e-10
+```
+
+![](dasi_project_gss_newsconf_files/figure-html/unnamed-chunk-3-1.png) 
 
 From the results, we obtain a very small p-value, as such we reject the null hypothesis in favor of the alternative. Indeed, the two
 variables confidence in the executive branch of federal government and frequency of reading newspapers (media exposure) are
